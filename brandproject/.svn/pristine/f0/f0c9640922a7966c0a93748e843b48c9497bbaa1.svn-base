@@ -1,0 +1,119 @@
+import sys
+import codecs
+from bs4 import BeautifulSoup as bs
+import requests
+from selenium.webdriver import Chrome, ChromeOptions
+from konlpy.tag import Okt
+from gensim.models import word2vec
+import os
+import jpype
+
+
+# -------------------------------------------------------------------------
+# 한글 처리
+sys.stdout = codecs.getwriter('utf8')(sys.stdout.buffer)
+# print(sys.stdin)
+# print(sys.stdout)
+
+check = sys.argv[0]
+data = sys.argv[1]
+# data2 = sys.argv[2]
+print("-" * 50)
+print(" ********** data 확인 : ", check)
+
+print(" ********** data : ", data, type(data))
+
+print("trim한 데이터 ==> ")
+print(data.strip())
+
+# print(" ********** data2 : ", data2, type(data2))
+
+# -------------------------------------------------------------------------
+
+
+# def test():
+#     with open('d:\\workspace\\python\\studyPython\\brandProject\\data\\spring.csv', encoding='utf-8') as f:
+#         # jars = "C:\\Program Files\\Java\\jdk1.8.0_221\\lib"
+#         # jpype.startJVM(jpype.getDefaultJVMPath(), "-Djava.class.path='C:\\Program Files\\Java\\jdk1.8.0_221\\lib'")
+#         # jpype.startJVM("C:\\Program Files\\Java\\jdk1.8.0_221\\jre\\bin\\server\\jvm.dll",
+#         #                "-Djava.class.path=%s" % os.pathsep.join(jars))
+#         source = f.read()
+#         # print(source)
+#         text = source.split('\n')
+#         # print(text)
+#         # print(len(text))
+#         o = Okt()
+#         temp = {}
+#         temp2 = []
+#         for t in text:
+#             malist = o.pos(t)  # [(단어, 품사),(단어, 품사),...(단어, 품사)]
+#             # print(malist)
+#             # print(len(malist))
+#             for mal in malist:  # (단어, 품사)
+#                 if (mal[1] == 'Noun') | (mal[1] == 'Verb'):
+#                     if not mal[0] in temp:
+#                         temp[mal[0]] = 0
+#                     temp[mal[0]] = temp[mal[0]] + 1
+#             # print(temp)
+#             # break
+#         # print(temp)
+#         temp2 = sorted(temp.items(), key=lambda x: x[-1], reverse=True)
+#         # print(temp2)
+#         for t2 in temp2[:50]:
+#             print(t2)
+#             temp2.append(t2)
+#
+#         return temp2
+#
+#
+# temp2 = test()
+
+# ---------------------------------------------------------------------------------
+# 네이버 크롤링 for selenium
+# baseURL = 'https://datalab.naver.com/keyword/trendSearch.naver'
+#
+# # URL 접속
+# recvd = requests.get(baseURL)
+# # print(recvd)  # <Response [200]> 접속 성공
+#
+# # DOM 객체 만들기
+# dom = bs(recvd.text, 'lxml')
+# print(dom)
+# ==> 접근불가 : 서비스에 접속할 수 없습니다
+#
+# key = "여행"
+# options = ChromeOptions()
+# options.add_argument("-headless")
+# browser = Chrome(options=options)
+# # browser = Chrome()
+# # Selenium은 기본적으로 웹 자원들이 모두 로드될때까지 기다려주지만,
+# # 암묵적으로 모든 자원이 로드될때 까지 기다리게 하는 시간을 직접 implicitly_wait을 통해 지정할 수 있다.
+# browser.implicitly_wait(3)
+#
+# # selenium.common.exceptions.SessionNotCreatedException:
+# # Message: session not created: This version of ChromeDriver only supports Chrome version 81
+# # chrom과 드라이버 버전 확인하기
+# baseURL = "https://datalab.naver.com/keyword/trendSearch.naver"
+# browser.get(baseURL)
+# print("네이버 접근")
+#
+# # 텍스트 박스에 keyword 입력
+# e = browser.find_element_by_css_selector('div.set_keyword > input.input_text')
+# e.clear()
+# e.send_keys(key)
+# print('keyword 입력')
+#
+# # 입력 샹식 전송해서 결과 보기
+# a = browser.find_element_by_css_selector('fieldset > a.ca_btn_go')
+# a.click()
+# print('검색 - url 넘어감')
+#
+# clip_path = browser.find_element_by_css_selector('div.inner_graph_area > svg > g > g')
+# # url = clip_path.get_attribute('clip-path')[4:-1]
+# # print(url)
+#
+# print('새로운 페이지')
+# url = "https://datalab.naver.com/keyword/trendResult.naver?hashKey=N_be6722a45026a855b3e1bb9db2b544e3"
+# browser.get(url)
+# download = browser.find_element_by_css_selector('div.cont_file_down > a')
+# download.click()

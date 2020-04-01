@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.branddog.member.mapper.MemberMapper">
+
+	<select id="list" resultType="com.branddog.member.dto.MemberDTO">
+		select * from (
+			select rownum rnum, no, id, name
+			from (
+				select no, id, name
+				from member order by no desc
+			) 
+		)
+		where rnum between 1 and 10
+	</select>
+
+	<select id="view" resultType="com.branddog.member.dto.MemberDTO">
+		select * from member where no = #{no}
+	</select>
+	
+	<insert id="join">
+		insert into member(no, id, pw, name)
+		values(member_seq.nextval, #{id}, #{pw}, #{name})
+	</insert>
+	
+	<select id="login" resultType="com.branddog.member.dto.MemberDTO">
+		select id, pw, name from member
+		where id = #{id}
+	</select>
+	
+	<update id="update">
+		update member set title = #{title}, content = #{content}, writer = #{writer},
+		where no = #{no} and pw = #{pw}
+	</update>
+	
+	<delete id="delete">
+		delete from member where id = #{id}
+	</delete>
+	
+</mapper>

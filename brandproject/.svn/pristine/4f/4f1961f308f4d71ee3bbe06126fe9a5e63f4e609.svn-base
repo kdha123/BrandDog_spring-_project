@@ -1,0 +1,32 @@
+package com.branddog.travel.service;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.branddog.travel.dto.TravelReWordDTO;
+import com.branddog.travel.dto.TravelSearchDTO;
+import com.branddog.travel.mapper.TravelMapper;
+
+import lombok.AllArgsConstructor;
+
+@Service
+@Qualifier("ts")
+@AllArgsConstructor
+public class TravelServiceImpl implements TravelService {
+	
+	private TravelMapper mapper;
+
+	@Override
+	public TravelSearchDTO searchTrend(int no) {
+		// TODO Auto-generated method stub
+		
+		return mapper.getSearchTrendData(no);
+	}
+
+	@Override
+	public TravelReWordDTO reWordCheck(String keywords) {
+		// TODO Auto-generated method stub
+		return mapper.reWordCheck(keywords);
+	}
+
+}

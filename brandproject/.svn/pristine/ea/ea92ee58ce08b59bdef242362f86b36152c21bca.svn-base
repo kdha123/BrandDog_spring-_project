@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE XML>
+<!-- 작성자 : 김동현 -->
+<!-- 작성일 : 2020-02-24 -->
+<!-- 꾸미기(레이아웃)에 대한 선언 : sitemesh 적용 -->
+<decorators defaultdir="/WEB-INF/views/decorator">
+	<!-- hello에 대한 요청이 들어오면 적용시키는 레이아웃 선언 -->
+	<!-- url pattern이 JSP와 Spring이 다르기 때문에  "/*"를 제거 해야할 때가 있다. -->
+	<decorator name="main" page="default_decorator.jsp">
+		<pattern>/*</pattern>
+		<pattern>/main/*</pattern>
+		<pattern>/culture/*</pattern>
+		<pattern>/board/*</pattern>
+		<pattern>/travel/*</pattern>
+		<pattern>/member/*</pattern>
+		<pattern>/news/*</pattern>
+		<pattern>/food/*</pattern>
+		<pattern>/qna/*</pattern>
+		<pattern>/error/*</pattern>
+
+	</decorator>
+	<!-- 여러형태의 레이아웃을 사용하려면 decorator 태그를 여러개 만든다. 
+	<decorator name="admin" page="admin_decorator.jsp">
+		<pattern>/admin/*</pattern>
+	</decorator>
+	 -->
+	<!-- 게시판의 대한 요청 레이아웃 선언 -->
+
+	<!-- 데코레이션에서 제외되는 요청을 선언 -->
+
+</decorators>

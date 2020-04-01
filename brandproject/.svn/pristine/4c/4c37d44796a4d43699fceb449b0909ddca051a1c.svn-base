@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:context="http://www.springframework.org/schema/context"
+ xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+ xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+  http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+ 
+ <!-- Root Context: defines shared resources visible to all other web components -->
+ <!-- 객체 선언: 자동 생성  -->
+ <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+ <!-- 
+ 바로 오라클 로 가는 거 기본 타입
+ <property name="driverClassName"
+ value="oracle.jdbc.driver.OracleDriver" />
+ <property name="jdbcUrl"
+ value="jdbc:oracle:thin:@402-oracle:1521:orcl" />
+ -->
+  <property name="driverClassName"
+ value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
+ <!-- DB 접속 정보를 설치한 것에 맞게 변경해 줘야 한다. -> 만약에 11g xe를 설치한 경우
+ <property name="jdbcUrl"
+ value="jdbc:log4jdbc:oracle:thin:@localhost:1521:xe" />
+ <property name="username" value="java09" />
+ <property name="password" value="java09" />
+ -->
+ <property name="jdbcUrl"
+ value="jdbc:log4jdbc:oracle:thin:@106.243.249.72:4521:orcl" />
+ <property name="username" value="c##branddog" />
+ <property name="password" value="12345" />
+ 
+ </bean>
+ <!-- 서버가 시작되면 Connection을 만들어서 DBCP에 넣어둔다. 속도  -->
+ <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"
+  destroy-method="close">
+  <constructor-arg ref="hikariConfig" />
+ </bean>
+ <!-- Mybaits - dao 코드 자동 생성  -->
+ <!-- mapper Interface(메서드이름) - mapper xml(sql) -->
+ <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+ <property name="dataSource" ref="dataSource"></property>
+ </bean>
+ 
+ <!-- dao(persitence) 자동으로 만들어 주기 위한 위치 -->
+ <mybatis-spring:scan base-package="com.branddog"/>
+ 
+ <context:component-scan base-package="com.branddog">
+ </context:component-scan>
+ 
+</beans>

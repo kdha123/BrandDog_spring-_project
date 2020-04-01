@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+	<resources mapping="/css/**" location="/css/" />
+	<resources mapping="/js/**" location="/js/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<!-- fileUpload 설정을 위한 객체 -->
+	
+	<beans:bean id="multipartResolver" 
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="defaultEncoding" value="utf-8"></beans:property>
+
+		<!-- 한번에 올릴 수 있는 전체 용량 제한  10485756000 -> 1G-->
+		<beans:property name="maxUploadSize" value="10485756000"></beans:property>
+
+		<!-- 한개의 파일의 용량 제한. -->
+		<beans:property name="maxUploadSizePerFile" value="209715200"></beans:property>
+		
+		<!-- 서버에서 파일을 올리면 임시 폴더에 일단 저장하게 되고 다음에 copy명령으로 원하는 위치에 복사하게 된다. -->
+		<beans:property name="uploadTempDir" value="file:/C:/tmp"></beans:property>
+		
+		<!-- upload되는 파일의 크기가 4M 이내인 경우는 메인메모리를 사용한다. 파일을 사용하지 않는다. -->
+		<beans:property name="maxInMemorySize" value="40485756"></beans:property>
+	</beans:bean>
+	
+	<context:component-scan base-package="com.branddog" />
+	<interceptors>
+		<interceptor>
+			<mapping path="/**"/>
+			<beans:bean
+				class="com.branddog.util.interceptor.AuthInterceptor" />
+
+		</interceptor>
+	</interceptors>
+	
+	
+</beans:beans>

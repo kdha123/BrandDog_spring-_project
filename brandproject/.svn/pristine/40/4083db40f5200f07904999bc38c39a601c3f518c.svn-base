@@ -1,0 +1,261 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<style type="text/css">
+#loading {
+ width: 100%;  
+ height: 100%;  
+ top: 0px;
+ left: 0px;
+ position: fixed;  
+ display: block;  
+ opacity: 0.7;  
+ background-color: #fff;  
+ z-index: 99;  
+ text-align: center; } 
+  
+#loading-image {  
+ position: absolute;  
+ top: 50%;  
+ left: 50%; 
+ z-index: 100; }
+ 
+/* d3 예제 style */
+line {
+  stroke: #000000;
+  stroke-opacity: 0.6;
+}
+
+.node rect {
+  stroke: #fff;
+  stroke-width: 3px;
+}
+
+.node text {
+  font-family: Malgun Gothic;
+/*   font-size: 10px; */
+  color: white;
+}
+</style>
+
+<script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+<script src="/js/bluebird.min.js"></script>
+<script src="/js/html2canvas.min.js"></script>
+<script type="text/javascript">
+google.charts.load('current', {packages: ['corechart', 'line']});
+google.charts.setOnLoadCallback(drawBasic);
+
+function drawBasic() {
+	
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'period');
+    data.addColumn('number', 'ratio');
+
+    data.addRows(${data});
+
+    var options = {
+      hAxis: {
+        title: '기간'
+      },
+      vAxis: {
+        title: '검색량'
+      },
+      legend: { position: 'bottom' },
+      height: 700
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+    chart.draw(data, options);
+}
+</script>
+<script type="text/javascript">
+google.charts.load("current", {packages:["corechart"]});
+google.charts.setOnLoadCallback(drawChart);
+function drawChart() {
+	var title = "${reWord.title}";
+	var data = google.visualization.arrayToDataTable([
+		['관련어', '건수'],
+		${reWord.word1},
+		${reWord.word2},
+		${reWord.word3},
+		${reWord.word4},
+		${reWord.word5},
+		${reWord.word6},
+		${reWord.word7},
+		${reWord.word8},
+		${reWord.word9},
+		${reWord.word10},
+	]);
+
+	var options = {
+		title: title + ' 관련어',
+		pieHole: 0.4,
+	};
+
+	var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+	chart.draw(data, options);
+}
+</script>
+<script type="text/javascript">
+function pdfSave(){
+	// 현재 document.body의 html을 A4크기에 맞춰 PDF로 변환
+	html2canvas(document.getElementById('totalContent')).then(function(canvas) {
+
+		// 캔버스를 이미지로 변환
+		var imgData = canvas.toDataURL('image/png');
+
+		var imgWidth = 210; // 이미지 가로 길이(mm) A4 기준
+		var pageHeight = imgWidth * 1.414 // 출력 페이지 세로길이 계산 - A4기준
+		var imgHeight = canvas.height * imgWidth / canvas.width;
+		var heightLeft = imgHeight;
+
+		var doc = new jsPDF('p', 'mm', 'a4');
+		var position = 0;
+
+		// 첫 페이지 출력
+		doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+		heightLeft -= pageHeight;
+
+		// 한 페이지 이상일 경우 루프 돌면서 출력
+		while(heightLeft >= 20){
+			position = heightLeft - imgHeight;
+			doc.addPage();
+			doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+			heightLeft -= pageHeight;
+		}
+
+		// 파일 저장
+		doc.save('sample.pdf');
+	});
+};
+</script>
+<script type="text/javascript">
+
+</script>
+
+<title>여행</title>
+</head>
+<body>
+
+<div class="container" id="totalContent">
+	<h2>보고서 화면</h2>
+	<div id="content" align="center">
+		<div id="donutchart" style="width: 90%; height: 500px;"></div>
+		<div class="canvas" style="background-color: white; width: 90%;"></div>
+		<div id="chart_div" align="center" style="width: 90%;"></div>
+	</div>
+	<script src="https://d3js.org/d3.v3.min.js"></script>
+	<script type="text/javascript">
+	
+		var margin = {
+			top: 20,
+			bottom: 50,
+			right: 30,
+			left: 50
+			};
+	
+		var c10 = d3.scale.category10();
+		
+		
+		var width = 960 - margin.left - margin.right;
+		var height = 600 - margin.top - margin.bottom;
+	// linkdata에 나와 있는 숫자는 nodedata에 들어있는 배열 순서이다 ex) source: 1 => {"name": "test02", "value":1, "zone": 2}
+	//                                                source: 3 => {"name": "test04", "value":1, "zone": 4}
+		var linkdata = [
+			{"source":0,"target":1, "value": 3},
+			{"source":0,"target":2, "value": 3},
+			{"source":0,"target":3},
+			{"source":0,"target":4},
+			{"source":0,"target":5},
+			{"source":0,"target":6}
+			];
+	
+		var nodedata = [
+			{"name": "test01", "value":40, "zone": 1},
+			{"name": "test02", "value":1, "zone": 2},
+			{"name": "test03", "value":1, "zone": 3},
+			{"name": "test04", "value":1, "zone": 4},
+			{"name": "test02-1", "value":1, "zone": 5},
+			{"name": "test03-1", "value":1, "zone": 6},
+			{"name": "test03-2", "value":1, "zone": 7}
+			];
+		
+		var canvas = d3.select(".canvas").append("svg")
+			.attr("width", width+margin.left+margin.right)
+			.attr("height", height+margin.top+margin.bottom)
+			.append("g")
+			.attr("transform", "translate("+margin.left+","+margin.top+")");
+	
+		var force = d3.layout.force()
+			.size([width, height])
+			.nodes(nodedata)
+			.links(linkdata)
+			.gravity(0.05)
+			.charge(-200)
+			.linkDistance(200);
+		
+		var link = canvas.selectAll(".link")
+			.data(linkdata)
+			.enter()
+			.append("line")
+			.attr("stroke-width", "3px")  // 연결선의 두께 색깔은 style에서 지정
+			.attr("class", "link");
+	
+		var node = canvas.selectAll(".node")
+			.data(nodedata)
+			.enter()
+			.append("g")
+			.attr("class", "node")
+			.call(force.drag);
+		
+		var rect = node.append("rect")
+			.attr("stroke", "yellow")  // 원의 테투리 색
+			.attr("stroke-width", "3px")  // 원의 테투리 두께
+			.attr("width", function(d){ if(d.value>30)return "120px";else return "100px" })  // value가 29가 아니라면 20으로 value = r(원의 반지름)
+			.attr("height", function(d){ return d.value>39 ? d.value : 30; })
+			.attr("rx", 7)
+			.attr("ry", 7)
+// 			.attr("fill", function(d){ return c10(d.zone*10); });  // 원의 색(nodedate에서 zone으로 구분!!)
+			.attr("fill", function(d){ return d.value > 39 ? "#000" : c10(d.zone*10); });  // 원의 색(nodedate에서 zone으로 구분!!)
+	
+		var label = node.append("text")
+			.attr("dx", function(d){if(d.value >39) return "40px"; else return "5px";})  // 글씨의 위치(x축, 원의 중심 기준)
+			.attr("dy", function(d){if(d.value >39) return "27px"; else return "20px";})  // 글씨의 위치(y축, 원의 중심 기준)
+			.attr("font-size", "15px")  // 글씨의 크기
+			.attr("fill", "rgb(255, 255, 255)")
+			.text(function(d){ return d.name; });
+	
+		force.on("tick", function(){
+			//Set X and Y of node
+			node.attr("r", function(d){ return d.value; })
+				.attr("cx", function(d){ return d.x; })
+				.attr("cy", function(d){ return d.y; });
+			//Set X, Y of link
+// 			link.attr("x1", function(d){ return d.value > 2 ? d.source.x+60 : d.source.x+30; })  // 선의 시작점(x축) <= source
+			link.attr("x1", function(d){ return d.source.x+60; })  // 선의 시작점(x축) <= source
+			link.attr("y1", function(d){ return d.value > 2 ? d.source.y+30 : d.source.y+10; })  // 선의 시작점(y축)
+// 			link.attr("x2", function(d){ return d.value > 2 ? d.target.x+15 : d.target.x+8; })  // 선의 끝(x축) <= target
+			link.attr("x2", function(d){ return d.target.x+15; })  // 선의 끝(x축) <= target
+			link.attr("y2", function(d){ return d.value > 2 ? d.target.y+20 : d.target.y+5; }); // 선의 끝(y축)
+			//Shift node a little
+			node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+			});
+	
+		//Start the force layout calculation
+		force.start();
+	</script>
+	<div>
+		<button type="button" id="createPDF" onclick="pdfSave();"><span>PDF</span></button>
+	</div>
+</div>
+
+</body>
+</html>

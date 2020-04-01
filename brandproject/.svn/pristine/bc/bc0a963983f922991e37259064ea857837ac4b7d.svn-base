@@ -1,0 +1,12 @@
+package com.branddog.travel.service;
+
+import com.branddog.travel.dto.TravelReWordDTO;
+import com.branddog.travel.dto.TravelSearchDTO;
+
+public interface TravelService {
+	
+	public TravelSearchDTO searchTrend(int no);
+	
+	public TravelReWordDTO reWordCheck(String title);
+	
+}

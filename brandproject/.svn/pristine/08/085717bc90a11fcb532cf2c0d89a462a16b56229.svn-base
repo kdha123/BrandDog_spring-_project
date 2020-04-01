@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.branddog.food.mapper.FoodMapper">
+
+	
+	<select id="view" resultType="com.branddog.food.dto.FoodReWordDTO">
+		select * from(
+		select rownum rnum,no,title,word1,word2,word3,word4,word5,word6,word7,word8,word9,word10
+		from(
+		select no,title,word1,word2,word3,word4,word5,word6,word7,word8,word9,word10
+		from foodReWord
+		order by no desc
+		)
+	)where rnum = 1
+		
+	</select>
+	<select id="view2" resultType="com.branddog.food.dto.FoodSearchTrendDTO">
+		select * from(
+		select rownum rnum,no,startdate,enddate,timeunit,title,keywords,data
+		from(
+		select no,startdate,enddate,timeunit,title,keywords,data
+		from FoodSearchTrend
+		order by no desc
+		)
+	)where rnum = 1
+		
+	</select>
+	
+	
+	<select id="count" resultType="com.branddog.food.dto.FoodSearchTrendDTO">
+	
+	select COUNT(*) count
+from foodreword
+where title = #{title}
+	
+	</select>
+	
+	
+</mapper>

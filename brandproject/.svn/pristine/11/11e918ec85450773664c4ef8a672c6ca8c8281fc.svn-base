@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE XML>
+<!-- 작성자 : 김동현 -->
+<!-- 작성일 : 2020-02-24 -->
+<!-- sitemesh 설정에 대한 정의 xml 파일 -->
+<sitemesh>
+	<!-- 레이아웃 꾸미기는 /WEB-INF/decorators.xml로 정의 -->
+	<property name="decorators-file" value="/WEB-INF/decorators.xml" />
+	<!-- 위에 property로 정의된 xml를 포함 시킨다. -->
+	<excludes file="${decorators-file}" />
+
+	<!-- HTML 분해 객체 선택 : title, head, body -->
+	<page-parsers>
+		<parser content-type="text/html"
+			class="com.opensymphony.module.sitemesh.parser.HTMLPageParser" />
+	</page-parsers>
+
+	<!-- HTML 조립기 -->
+	<decorator-mappers>
+		<mapper
+
+			class="com.opensymphony.module.sitemesh.mapper.ConfigDecoratorMapper">
+			<param name="config" value="${decorators-file}" />
+		</mapper>
+	</decorator-mappers>
+</sitemesh>

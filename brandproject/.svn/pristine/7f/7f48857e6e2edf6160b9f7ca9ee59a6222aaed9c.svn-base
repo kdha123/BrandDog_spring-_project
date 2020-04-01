@@ -1,0 +1,292 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<style type="text/css">
+#loading {
+ width: 100%;  
+ height: 100%;  
+ top: 0px;
+ left: 0px;
+ position: fixed;  
+ display: block;  
+ opacity: 0.7;  
+ background-color: #fff;  
+ z-index: 99;  
+ text-align: center; } 
+  
+#loading-image {  
+ position: absolute;  
+ top: 50%;  
+ left: 50%; 
+ z-index: 100; }
+ 
+/* d3 예제 style */
+line {
+  stroke: #bfbfbf;
+  stroke-opacity: 0.6;
+}
+
+.node rect {
+  stroke: #fff;
+  stroke-width: 3px;
+}
+
+.node text {
+  font-family: Malgun Gothic;
+/*   font-size: 10px; */
+  color: white;
+}
+#rewordtable {float: right; margin-right: 100px; margin-top: 50px;}
+</style>
+
+<script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+<script src="/js/html2canvas.min.js"></script>
+<script type="text/javascript">
+google.charts.load('current', {packages: ['corechart', 'line']});
+google.charts.setOnLoadCallback(drawBasic);
+
+function drawBasic() {
+	
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'period');
+    data.addColumn('number', 'ratio');
+
+    data.addRows(${data});
+
+    var options = {
+      hAxis: {
+        title: '기간'
+      },
+      vAxis: {
+        title: '검색량'
+      },
+      legend: { position: 'bottom' },
+      height: 700
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+    chart.draw(data, options);
+}
+</script>
+<script type="text/javascript">
+function pdfSave(){
+	// 현재 document.body의 html을 A4크기에 맞춰 PDF로 변환
+	html2canvas(document.getElementById('totalContent')).then(function(canvas) {
+
+		// 캔버스를 이미지로 변환
+		var imgData = canvas.toDataURL('image/png');
+
+		var imgWidth = 210; // 이미지 가로 길이(mm) A4 기준
+		var pageHeight = imgWidth * 1.414 // 출력 페이지 세로길이 계산 - A4기준
+		var imgHeight = canvas.height * imgWidth / canvas.width;
+		var heightLeft = imgHeight;
+
+		var doc = new jsPDF('p', 'mm', 'a4');
+		var position = 0;
+
+		// 첫 페이지 출력
+		doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+		heightLeft -= pageHeight;
+
+		// 한 페이지 이상일 경우 루프 돌면서 출력
+		while(heightLeft >= 20){
+			position = heightLeft - imgHeight;
+			doc.addPage();
+			doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+			heightLeft -= pageHeight;
+		}
+
+		// 파일 저장
+		doc.save('sample.pdf');
+	});
+
+};
+</script>
+<script type="text/javascript">
+	
+</script>
+
+<title>여행</title>
+</head>
+<body>
+
+<div class="container" id="totalContent">
+	<h2>보고서 화면</h2>
+	<div id="content">
+<!-- 		<div id="donutchart" style="width: 90%; height: 500px;"></div> -->
+		<div>
+			<div class="canvas" style="background-color: white; width: 90%; height: 700px">
+				<table id="rewordtable">
+					<tr>
+						<th>순위</th><th>연관어</th><th>건수</th>
+					</tr>
+					<tr>
+						<td>1</td><td>${reWord["word1"][0]}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div id="chart_div" align="center" style="width: 90%;"></div>
+	</div>
+	<script src="https://d3js.org/d3.v3.min.js"></script>
+	<script type="text/javascript">
+	
+		var margin = {
+			top: 20,
+			bottom: 50,
+			right: 30,
+			left: 50
+			};
+	
+		var c10 = d3.scale.category10();
+		
+		
+		var width = 600 - margin.left - margin.right;
+		var height = 500 - margin.top - margin.bottom;
+	// linkdata에 나와 있는 숫자는 nodedata에 들어있는 배열 순서이다 ex) source: 1 => {"name": "test02", "value":1, "zone": 2}
+	//                                                source: 3 => {"name": "test04", "value":1, "zone": 4}
+		var linkdata = [
+			{"source":0,"target":1, "distance": 180, "name": ${reWord.word1}[0]},
+			{"source":0,"target":2, "distance": 180, "name": ${reWord.word2}[0]},
+			{"source":0,"target":3, "distance": 180, "name": ${reWord.word3}[0]},
+			{"source":0,"target":4, "distance": 180, "name": ${reWord.word4}[0]},
+			{"source":0,"target":5, "distance": 180, "name": ${reWord.word5}[0]},
+			{"source":0,"target":6, "distance": 180, "name": ${reWord.word6}[0]},
+			{"source":0,"target":7, "distance": 180, "name": ${reWord.word7}[0]},
+			{"source":0,"target":8, "distance": 180, "name": ${reWord.word8}[0]},
+			{"source":0,"target":9, "distance": 180, "name": ${reWord.word9}[0]},
+			{"source":0,"target":10, "distance": 180, "name": ${reWord.word10}[0]},
+			{"source":0,"target":11, "distance": 180, "name": ${reWord.word11}[0]},
+			{"source":0,"target":12, "distance": 180, "name": ${reWord.word12}[0]},
+			{"source":0,"target":13, "distance": 180, "name": ${reWord.word13}[0]},
+			{"source":0,"target":14, "distance": 180, "name": ${reWord.word14}[0]},
+			{"source":0,"target":15, "distance": 180, "name": ${reWord.word15}[0]},
+			{"source":0,"target":16, "distance": 150, "name": ${reWord.word16}[0]},
+			{"source":0,"target":17, "distance": 150, "name": ${reWord.word17}[0]},
+			{"source":0,"target":18, "distance": 150, "name": ${reWord.word18}[0]},
+			{"source":0,"target":19, "distance": 150, "name": ${reWord.word19}[0]},
+			{"source":0,"target":20, "distance": 150, "name": ${reWord.word20}[0]},
+			{"source":0,"target":21, "distance": 150, "name": ${reWord.word21}[0]},
+			{"source":0,"target":22, "distance": 150, "name": ${reWord.word22}[0]},
+			{"source":0,"target":23, "distance": 150, "name": ${reWord.word23}[0]},
+			{"source":0,"target":24, "distance": 150, "name": ${reWord.word24}[0]},
+			{"source":0,"target":25, "distance": 150, "name": ${reWord.word25}[0]},
+			{"source":0,"target":26, "distance": 120, "name": ${reWord.word26}[0]},
+			{"source":0,"target":27, "distance": 120, "name": ${reWord.word27}[0]},
+			{"source":0,"target":28, "distance": 120, "name": ${reWord.word28}[0]},
+			{"source":0,"target":29, "distance": 120, "name": ${reWord.word29}[0]},
+			{"source":0,"target":30, "distance": 120, "name": ${reWord.word30}[0]},
+			];
+	
+		var nodedata = [
+			{"name": "${reWord.title}", "value":40, "zone": 1},
+			{"name": ${reWord.word1}[0], "value":1, "zone": 2},
+			{"name": ${reWord.word2}[0], "value":1, "zone": 3},
+			{"name": ${reWord.word3}[0], "value":1, "zone": 4},
+			{"name": ${reWord.word4}[0], "value":1, "zone": 5},
+			{"name": ${reWord.word5}[0], "value":1, "zone": 6},
+			{"name": ${reWord.word6}[0], "value":1, "zone": 7},
+			{"name": ${reWord.word7}[0], "value":1, "zone": 8},
+			{"name": ${reWord.word8}[0], "value":1, "zone": 9},
+			{"name": ${reWord.word9}[0], "value":1, "zone": 10},
+			{"name": ${reWord.word10}[0], "value":1, "zone": 1},
+			{"name": ${reWord.word11}[0], "value":1, "zone": 2},
+			{"name": ${reWord.word12}[0], "value":1, "zone": 3},
+			{"name": ${reWord.word13}[0], "value":1, "zone": 4},
+			{"name": ${reWord.word14}[0], "value":1, "zone": 5},
+			{"name": ${reWord.word15}[0], "value":1, "zone": 6},
+			{"name": ${reWord.word16}[0], "value":1, "zone": 7},
+			{"name": ${reWord.word17}[0], "value":1, "zone": 8},
+			{"name": ${reWord.word18}[0], "value":1, "zone": 9},
+			{"name": ${reWord.word19}[0], "value":1, "zone": 10},
+			{"name": ${reWord.word20}[0], "value":1, "zone": 1},
+			{"name": ${reWord.word21}[0], "value":1, "zone": 2},
+			{"name": ${reWord.word22}[0], "value":1, "zone": 3},
+			{"name": ${reWord.word23}[0], "value":1, "zone": 4},
+			{"name": ${reWord.word24}[0], "value":1, "zone": 5},
+			{"name": ${reWord.word25}[0], "value":1, "zone": 6},
+			{"name": ${reWord.word26}[0], "value":1, "zone": 7},
+			{"name": ${reWord.word27}[0], "value":1, "zone": 8},
+			{"name": ${reWord.word28}[0], "value":1, "zone": 9},
+			{"name": ${reWord.word29}[0], "value":1, "zone": 10},
+			{"name": ${reWord.word30}[0], "value":1, "zone": 1},
+			];
+
+		var canvas = d3.select(".canvas").append("svg")
+			.attr("width", width+margin.left+margin.right)
+			.attr("height", height+margin.top+margin.bottom)
+			.append("g")
+			.attr("transform", "translate("+margin.left+","+margin.top+")");
+	
+		var force = d3.layout.force()
+			.size([width, height])
+			.nodes(nodedata)
+			.links(linkdata)
+			.gravity(0.05)
+			.charge(-200)
+			.distance(function(d){return d.distance;})
+			
+		var link = canvas.selectAll(".link")
+			.data(linkdata)
+			.enter()
+			.append("line")
+			.attr("stroke-width", "3px")  // 연결선의 두께 색깔은 style에서 지정
+			.attr("class", "link");
+	
+		var node = canvas.selectAll(".node")
+			.data(nodedata)
+			.enter()
+			.append("g")
+			.attr("class", "node")
+			.call(force.drag);
+		
+		var rect = node.append("rect")
+			.attr("stroke", "yellow")  // 원의 테투리 색
+			.attr("stroke-width", "3px")  // 원의 테투리 두께
+// 			alert(d.name.length); 4글자 90px
+			.attr("width", function(d){ if(d.value>30)return "80px";else return d.name.length * 17 + "px" })  // value가 29가 아니라면 20으로 value = r(원의 반지름)
+			.attr("height", function(d){ return d.value>39 ? d.value : 30; })
+			.attr("rx", 7)
+			.attr("ry", 7)
+// 			.attr("fill", function(d){ return c10(d.zone*10); });  // 원의 색(nodedate에서 zone으로 구분!!)
+			.attr("fill", function(d){ return d.value > 39 ? "#000" : c10(d.zone*10); });  // 원의 색(nodedate에서 zone으로 구분!!)
+	
+		var label = node.append("text")
+			.attr("dx", function(d){if(d.value >39) return 36 - (d.name.length * 5) + "px"; else return d.name.length + 2.5 + "px";})  // 글씨의 위치(x축, 원의 중심 기준)
+			.attr("dy", function(d){if(d.value >39) return "24px"; else return "20px";})  // 글씨의 위치(y축, 원의 중심 기준)
+			.attr("font-size", "12px")  // 글씨의 크기
+			.attr("fill", "rgb(255, 255, 255)")
+			.text(function(d){ return d.name; });
+	
+		force.on("tick", function(){
+			//Set X and Y of node
+			node.attr("r", function(d){ return d.value; })
+				.attr("cx", function(d){ return d.x; })
+				.attr("cy", function(d){ return d.y; });
+			//Set X, Y of link
+			link.attr("x1", function(d){ return d.source.x+40; })  // 선의 시작점(x축) <= source
+			link.attr("y1", function(d){ return d.source.y+15; })  // 선의 시작점(y축)
+			link.attr("x2", function(d){ return d.target.x+d.name.length * 8; })  // 선의 끝(x축) <= target
+			link.attr("y2", function(d){ return d.target.y+20; }); // 선의 끝(y축)
+			//Shift node a little
+			node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+			});
+	
+		//Start the force layout calculation
+		force.start();
+	</script>
+	<div>
+		<button type="button" id="createPDF" onclick="pdfSave();"><span>PDF</span></button>
+	</div>
+</div>
+
+</body>
+</html>
